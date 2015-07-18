@@ -32,10 +32,11 @@ import argparse
 def linear_least_squares(x, mu):
 
 	"""
-	Generates a denoised version of the sequence x using linear least
-	squares, with mu working as a "denoising coefficient". If mu = 0,
-	no denoising is applied; the larger the value of mu, the smoother
-	the denoised sequence.
+	Generates a denoised version of the sequence x by defining an
+	especially designed cost function which can be minimized using
+	any solver for the linear least squares problem. Here mu works as
+	a "denoising coefficient". If mu = 0, no denoising is applied; the
+	larger the value of mu, the smoother the denoised sequence.
 	"""
 
 	n = len(x)
