@@ -41,7 +41,7 @@ def linear_least_squares(x, mu):
 
 	n = len(x)
 
-	if len(x) < 2:
+	if n < 2:
 		raise ValueError("not enough input data")
 
 	if mu < 0:
