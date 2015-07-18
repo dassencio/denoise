@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+
+################################################################################
+#
+#    Copyright (c) 2015, Diego Assencio (http://diego.assencio.com)
+#    All rights reserved.
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+################################################################################
+
+
+import sys
+import math
+import numpy
+import argparse
+
+
+def linear_least_squares(x, mu):
+
+	"""
+	Generates a denoised version of the sequence x using linear least
+	squares, with mu working as a "denoising coefficient". If mu = 0,
+	no denoising is applied; the larger the value of mu, the smoother
+	the denoised sequence.
+	"""
+
+	n = len(x)
+
+	if len(x) < 2:
+		raise ValueError("not enough input data")
+
+	if mu < 0:
+		raise ValueError("invalid denoising coefficient")
+
+	# n×n identity matrix
+	I = numpy.identity(n)
+
+	# (n-1)×n differentiation matrix
+	D = numpy.zeros((n-1,n))
+	for i in range(0,n-1):
+		D[(i,i)] = -1
+		D[(i,i+1)] = 1
+
+	A = numpy.concatenate((I, math.sqrt(mu)*D))
+	At = numpy.transpose(A)
+
+	AtA = numpy.dot(At,A)
+	b = numpy.concatenate((numpy.transpose(x), numpy.array([0]*(n-1))))
+	Atb = numpy.dot(At,b)
+
+	# the denoised seqeuence is the solution of (A^t*A)*x = A^t*b
+	return numpy.linalg.solve(AtA, Atb)
+
+
+def plot_sequences(x, x_tilde):
+
+	"""
+	Plots the original data (x) and denoised data (x_tilde).
+	"""
+
+	from matplotlib import pyplot
+
+	n = len(x)
+
+	# plot the original data
+	pyplot.plot(range(0,n), x, color='#1E90FF',
+		    ls='-', lw=1.0, label='original data')
+
+	# plot the denoised data
+	pyplot.plot(range(0,n), x_tilde, color='#D72C2C',
+		    ls='-', lw=2.0, label='denoised data')
+
+	pyplot.legend(loc='upper right')
+	pyplot.title("Original vs. denoised data")
+
+	ymin = min(min(x), min(x_tilde))
+	ymax = max(max(x), max(x_tilde))
+
+	# display limits of graph
+	pyplot.axis([0, n-1, ymin - 0.2*abs(ymin), ymax + 0.2*abs(ymax)])
+
+	pyplot.show()
+
+
+def main(in_file, out_file, mu, plot_results):
+
+	x = numpy.loadtxt(in_file)
+
+	x_tilde = linear_least_squares(x,mu)
+
+	for x_i in x_tilde:
+		out_file.write("%g\n" % x_i)
+
+	if plot_results:
+		plot_sequences(x, x_tilde)
+
+
+if __name__ == "__main__":
+
+	# parse input parameters
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-i', '--input-file', type=argparse.FileType('r'),
+	                    default=sys.stdin, help='input file (default: stdin)')
+	parser.add_argument('-o', '--output-file', type=argparse.FileType('w'),
+	                    default=sys.stdout, help='output file (default: stdout)')
+	parser.add_argument('-u', '--denoising-coefficient', type=float, default=20.0,
+	                    help='denoising coefficient')
+	parser.add_argument('-p', '--plot-results', action='count')
+	namespace = parser.parse_args()
+
+	in_file = namespace.input_file
+	out_file = namespace.output_file
+	mu = namespace.denoising_coefficient
+	plot_results = namespace.plot_results
+
+	main(in_file, out_file, mu, plot_results)
