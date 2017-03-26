@@ -1,33 +1,49 @@
 Description
 ===========
 
-An implementation in python of an algorithm for denoising data without using
-fitting functions.
+`denoise` is a script (written in Python 3) which denoises data without using
+fitting functions.  It implements the algorithm described
+[here](http://diego.assencio.com/?index=df0bdbd936cfac191141770bf91a6b6e).
 
 
 License
 =======
 
-All code from this project is licensed under the GPLv3. See 'LICENSE' for more.
+All code from this project is licensed under the GPLv3. See the `LICENSE` file
+for more information.
 
 
-Instructions
-============
+Required modules
+================
+
+The following modules are used:
+
+    - numpy
+    - matplotlib
+
+On Ubuntu/Debian, you can install them with the following command:
+
+	sudo apt-get install python3-numpy python3-matplotlib
+
+
+Usage instructions
+==================
 
 As an example, running
 
 	./denoise -i noisy_data.txt -o denoised_data.txt -u 20.0
 
-will take the data sequence on noisy_data.txt (one value per line), denoise it and
-write the denoised sequence on denoised_data.txt. Above, '-u 20.0' sets the
-denoising coefficient mu: mu = 0.0 means no denoising at all, while larger values
-of mu enforce more denoising and therefore a smoother output sequence.
+will take the data sequence on `noisy_data.txt` (one value per line), denoise it
+and write the denoised sequence on `denoised_data.txt`. Above, `-u 20.0` specifies
+the denoising coefficient &mu;: &mu; = 0.0 means no denoising at all, while larger
+values of &mu; enforce more denoising and therefore generate smoother output
+sequences.
 
-You can view a plot of both the original and denoised sequences by adding '-p'
+You can view a plot of both the original and denoised sequences by adding `-p`
 to the command above.
 
-For testing purposes, sample data with noise is provided on the directory
-'noisy_data'. Try running:
+For testing purposes, sample data with noise is provided on the `noisy_data`
+subdirectory. Try running:
 
 	./denoise -i noisy_data/sine.txt -p -u 10.0
 
@@ -35,20 +51,7 @@ and set the denoising coefficient to different values to get a feeling for
 how the denoising algorithm works.
 
 
-Required Libraries
-==================
-
-The following python libraries are used:
-
-    - numpy
-    - matplotlib
-
-On Ubuntu/Debian, you can install these libraries with:
-
-	sudo apt-get install python3-numpy python3-matplotlib
-
-
-Contributors & Contact Information
+Contributors & contact information
 ==================================
 
 Diego Assencio / diego@assencio.com
