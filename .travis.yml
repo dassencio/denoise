@@ -1,0 +1,23 @@
+language: generic
+
+dist: trusty
+sudo: required
+
+git:
+  depth: 3
+
+install:
+  - python3 --version
+  - sudo add-apt-repository universe
+  - sudo apt-get update
+  - sudo apt-get install -qq python3-numpy python3-matplotlib
+
+script:
+  - for in_file in $(cd noisy_data; ls *.txt); do out_file=denoised_$in_file; ./denoise -i noisy_data/$in_file -o $out_file -u 20.0; diff $out_file .travis/$out_file; done
+
+notifications:
+  email:
+    recipients:
+      - diego@assencio.com
+    on_success: change
+    on_failure: always

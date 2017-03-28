@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dassencio/denoise.svg?branch=master)](https://travis-ci.org/dassencio/denoise)
+
 Description
 ===========
 
