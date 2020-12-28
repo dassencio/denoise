@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+show_test_result() {
+  local test_status=$1
+  local test_name=$2
+  test $test_status -ne 0 && {
+      echo "[FAILED] $test_name."
+      exit 1
+  }
+  echo "[PASSED] $test_name."
+}
+
+for test_input_file in tests/*.in
+do
+  test_id=${test_input_file/.in/}
+  test_output_file=${test_input_file/.in/.out}
+  ./denoise -i $test_input_file -o /tmp/output.txt -u 20.0
+  diff /tmp/output.txt $test_output_file
+  show_test_result $? "$test_id"
+done
